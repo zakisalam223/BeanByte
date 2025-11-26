@@ -28,14 +28,14 @@
 
     @if (!Model.Any())
     {
-        <div class="bg-coffee-brown-dark text-center py-16 rounded-lg">
+        <div class="bg-coffee-brown-dark text-center py-16">
             <p class="text-lg font-medium text-coffee-cream">No pending files to review.</p>
         </div>
     }
     else
     {
-        <div class="overflow-x-auto bg-coffee-brown-dark shadow-md rounded-lg">
-            <table class="w-full border-collapse border border-coffee-brown-light">
+        <div class="overflow-x-auto bg-coffee-brown-dark rounded-none">
+            <table class="w-full border-collapse border-2 border-coffee-brown-light rounded-none">
                 <thead class="bg-coffee-brown">
                     <tr>
                         <th class="border border-coffee-brown-light px-4 py-2 text-left text-sm font-medium text-coffee-cream">Filename</th>
