@@ -1,10 +1,9 @@
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy project file first
+# Copy project file and restore dependencies
 COPY ["CPSCForum.csproj", "./"]
-
-# Restore dependencies
 RUN dotnet restore "CPSCForum.csproj"
 
 # Copy everything else and publish
@@ -15,14 +14,14 @@ RUN dotnet publish "CPSCForum.csproj" -c Release -o /app/publish /p:UseAppHost=f
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
-# Install CA certificates
+
 RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
 
-# Expose Render-assigned port
-EXPOSE 8080
-ENV ASPNETCORE_URLS=http://+:$PORT
-
-# Copy published app
 COPY --from=build /app/publish .
+
+ENV PORT=8080
+ENV ASPNETCORE_URLS=http://+:${PORT}
+
+EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "CPSCForum.dll"]
