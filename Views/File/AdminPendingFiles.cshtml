@@ -1,0 +1,84 @@
+﻿@model IEnumerable<forum_aspcore.Models.FFile>
+
+@{
+    ViewData["Title"] = "Pending Files";
+}
+
+<div class="container mx-auto px-4 py-12">
+    <div class="mb-8 text-center">
+        <h1 class="text-4xl font-extrabold text-coffee-cream mb-4">Pending Files</h1>
+        <p class="text-coffee-cream text-sm mb-6 italic">
+            Review and manage uploaded files awaiting approval.
+        </p>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 text-center max-w-2xl mx-auto">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 text-center max-w-2xl mx-auto">
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="bg-coffee-brown-dark text-center py-16 rounded-lg">
+            <p class="text-lg font-medium text-coffee-cream">No pending files to review.</p>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto bg-coffee-brown-dark shadow-md rounded-lg">
+            <table class="w-full border-collapse border border-coffee-brown-light">
+                <thead class="bg-coffee-brown">
+                    <tr>
+                        <th class="border border-coffee-brown-light px-4 py-2 text-left text-sm font-medium text-coffee-cream">Filename</th>
+                        <th class="border border-coffee-brown-light px-4 py-2 text-left text-sm font-medium text-coffee-cream">Uploaded By</th>
+                        <th class="border border-coffee-brown-light px-4 py-2 text-left text-sm font-medium text-coffee-cream">Upload Date</th>
+                        <th class="border border-coffee-brown-light px-4 py-2 text-left text-sm font-medium text-coffee-cream">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var file in Model)
+                    {
+                        <tr class="odd:bg-coffee-brown-dark even:bg-coffee-brown">
+                            <td class="border border-coffee-brown-light px-4 py-2 text-coffee-cream">@file.Filename</td>
+                            <td class="border border-coffee-brown-light px-4 py-2 text-coffee-cream">@file.UploadedBy</td>
+                            <td class="border border-coffee-brown-light px-4 py-2 text-coffee-cream">@file.UploadDate.ToLocalTime().ToString("MMM dd, yyyy hh:mm tt")</td>
+                            <td class="border border-coffee-brown-light px-4 py-2">
+                                <div class="flex items-center gap-4">
+                                    <a href="@Url.Action("Download", "File", new { id = file.FileID })" 
+                                       class="text-pale-green hover:underline">
+                                        Download
+                                    </a>
+
+                                    <form asp-action="ApproveFile" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="@file.FileID" />
+                                        <button type="submit" class="text-green-600 hover:underline"
+                                                onclick="return confirm('Are you sure you want to approve this file?');">
+                                            Approve
+                                        </button>
+                                    </form>
+
+                                    <form asp-action="DenyFile" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="@file.FileID" />
+                                        <button type="submit" class="text-red-600 hover:underline"
+                                                onclick="return confirm('Are you sure you want to deny this file?');">
+                                            Deny
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

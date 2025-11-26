@@ -1,0 +1,82 @@
+@model IEnumerable<forum_aspcore.Models.FThread>
+@{
+    ViewData["Title"] = "Forum Threads";
+    var userDictionary = ViewData["UserDictionary"] as Dictionary<string, FUser>;
+    var tagDictionary = ViewData["TagDictionary"] as Dictionary<string, FTag>;
+}
+
+<!-- Set the container to take full width -->
+
+<div class="w-full py-12 px-4 sm:px-6 lg:px-36">
+    <!-- Header Section -->
+    <div class="mb-8 flex items-center justify-between">
+        <h1 class="text-3xl font-bold text-coffee-cream">Forum Threads</h1>
+        <a href="@Url.Action("Create", "Threads")" 
+           class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pale-green hover:bg-pale-green-dark">
+            Create New Thread
+        </a>
+    </div>
+
+    <!-- Threads Container -->
+    <div class="bg-coffee-brown-dark shadow overflow-hidden sm:rounded-lg w-full">
+        <div class="divide-y divide-coffee-brown-light">
+            @if (!Model.Any())
+            {
+                <div class="p-6 text-center">
+                    <p class="text-coffee-cream">No threads have been created yet.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var thread in Model)
+                {
+                    <!-- Make each thread item full width with padding -->
+                    <div class="w-full px-6 py-4 hover:bg-coffee-brown">
+                        <h3 class="text-lg font-semibold text-coffee-cream">
+                            <a href="@Url.Action("Details", "Threads", new { id = thread.ThreadID })" 
+                               class="text-pale-green hover:text-pale-green-light">
+                                @thread.Title
+                            </a>
+                        </h3>
+                        <p class="mt-2 text-sm text-coffee-cream">@thread.Description</p>
+                        
+                        <!-- Tags Section -->
+                        @if (thread.TagIDs != null && thread.TagIDs.Any() && tagDictionary != null)
+                        {
+                            <div class="mt-2 flex flex-wrap gap-2">
+                                @foreach (var tagId in thread.TagIDs)
+                                {
+                                    if (tagDictionary.TryGetValue(tagId, out var tag))
+                                    {
+                                        <span class="px-2 py-1 text-sm border border-black bg-gray-100 rounded">
+                                            @tag.Name
+                                        </span>
+                                    }
+                                }
+                            </div>
+                        }
+                        
+                        <div class="mt-4 flex flex-wrap items-center text-sm text-coffee-cream">
+                            <span class="mr-4">
+                                <strong>Created At:</strong> @thread.CreatedAt.ToString("MMM dd, yyyy")
+                            </span>
+                            <span class="mr-4">
+                                <strong>Topic:</strong> @thread.Topic
+                            </span>
+                            <span>
+                                <strong>Created By:</strong> 
+                                @(userDictionary != null && userDictionary.ContainsKey(thread.UserID) ? userDictionary[thread.UserID].Username : "Unknown User")
+                            </span>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+}

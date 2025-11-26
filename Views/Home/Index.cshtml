@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+@* <div class="min-h-screen bg-gray-50">
+    <header class="bg-white shadow">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold text-pale-green">Forum<a>
+            <nav>
+                <a href="/Threads/Create" class="text-coffee-cream hover:text-pale-green mx-4">Create Thread</a>
+                    <a href="/PrivateMessage/Inbox" class="text-coffee-cream hover:text-pale-green mx-4">Messages</a>
+                    @if (User.Identity.IsAuthenticated) // Check if the user is authenticated
+                    {
+                        <form asp-controller="Users" asp-action="Logout" method="post" style="display:inline;">
+                            <button type="submit" class="text-gray-600 hover:text-gray-900">Logout</button>
+                        </form>
+                    }
+                <a href="/Users/Register" class="text-coffee-cream hover:text-pale-green mx-4">Register</a>
+                <a href="/Users/Login" class="text-coffee-cream hover:text-pale-green mx-4">Login</a>
+            </nav>
+        </div>
+    </header> *@
+
+    <section class="bg-pale-green text-white py-20">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-4">Welcome to the Forum</h2>
+            <p class="text-lg mb-6">Navigate through the site using the menu above.</p>
+            <a href="/Threads" class="bg-coffee-brown-dark text-pale-green px-6 py-2 rounded-full font-semibold shadow">Explore Threads</a>
+        </div>
+    </section>
+
+    <main class="container mx-auto py-12 px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white shadow rounded-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800">Active Threads</h3>
+                <p class="text-gray-600 mt-2">Engage in the most active conversations happening now.</p>
+                <a href="/Threads" class="text-pale-green hover:underline mt-4 inline-block">View All</a>
+            </div>
+
+            <div class="bg-white shadow rounded-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800">Popular Topics</h3>
+                <p class="text-gray-600 mt-2">See what's trending and join the buzz.</p>
+                <a href="/Section" class="text-pale-green hover:underline mt-4 inline-block">Explore Sections</a>
+            </div>
+
+            <div class="bg-white shadow rounded-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800">New Posts</h3>
+                <p class="text-gray-600 mt-2">Catch up on the latest discussions.</p>
+                <a href="/Threads" class="text-blue-600 hover:underline mt-4 inline-block">Read Posts</a>
+            </div>
+        </div>
+    </main>
+
+    @* <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 - Forum Application. All Rights Reserved.</p>
+            <div class="mt-4">
+                <a href="#" class="text-gray-400 hover:text-white mx-2">Privacy Policy</a>
+                <a href="#" class="text-gray-400 hover:text-white mx-2">Terms of Service</a>
+                <a href="#" class="text-gray-400 hover:text-white mx-2">Contact Us</a>
+            </div>
+        </div>
+    </footer> *@
+</div>

@@ -1,0 +1,57 @@
+﻿@model forum_aspcore.Models.FRegister
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="min-h-screen flex items-center justify-center bg-coffee-brown py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-coffee-cream">
+                Create your account
+            </h2>
+        </div>
+        <form class="mt-8 space-y-6" asp-action="Register" method="post">
+            @Html.ValidationSummary(true, "", new { @class = "text-red-500 text-sm" })
+            
+            <div class="rounded-md shadow-sm -space-y-px">
+                <div>
+                    <label asp-for="Username" class="sr-only">Username</label>
+                    <input asp-for="Username" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream placeholder-coffee-cream rounded-t-md focus:outline-none focus:ring-pale-green focus:border-pale-green focus:z-10 sm:text-sm" placeholder="Username">
+                    <span asp-validation-for="Username" class="text-red-500 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="Email" class="sr-only">Email</label>
+                    <input asp-for="Email" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream placeholder-coffee-cream focus:outline-none focus:ring-pale-green focus:border-pale-green focus:z-10 sm:text-sm" placeholder="Email">
+                    <span asp-validation-for="Email" class="text-red-500 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="Password" class="sr-only">Password</label>
+                    <input asp-for="Password" type="password" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream placeholder-coffee-cream focus:outline-none focus:ring-pale-green focus:border-pale-green focus:z-10 sm:text-sm" placeholder="Password">
+                    <span asp-validation-for="Password" class="text-red-500 text-xs"></span>
+                </div>
+                <div>
+                    <label asp-for="ConfirmPassword" class="sr-only">Confirm Password</label>
+                    <input asp-for="ConfirmPassword" type="password" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream placeholder-coffee-cream rounded-b-md focus:outline-none focus:ring-pale-green focus:border-pale-green focus:z-10 sm:text-sm" placeholder="Confirm Password">
+                    <span asp-validation-for="ConfirmPassword" class="text-red-500 text-xs"></span>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium text-white bg-pale-green hover:bg-pale-green-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pale-green">
+                    Register
+                </button>
+            </div>
+
+            <div class="text-sm text-center">
+                <a href="/Users/Login" class="font-medium text-coffee-cream hover:text-pale-green">
+                    Already have an account? Sign in
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

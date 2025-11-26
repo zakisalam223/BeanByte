@@ -1,0 +1,51 @@
+﻿<!-- Views/Admin/IssueInfraction.cshtml -->
+@model forum_aspcore.Models.FInfraction
+
+@{
+    ViewData["Title"] = "Issue Infraction";
+}
+
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3  mb-4">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<section class="w-screen h-screen flex items-center justify-center gap-5 ">
+    <div>
+        <h1 class="font-bold text-3xl">Issue Infraction</h1>
+        <form asp-action="IssueInfraction" method="post" class="min-w-96">
+            <div class="mb-4">
+                <label asp-for="GivenToUserID" class="block text-gray-700 text-sm font-bold mb-2">User ID</label>
+                <input asp-for="GivenToUserID" class=" appearance-none border  w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:-outline" placeholder="Enter User ID">
+                <span asp-validation-for="GivenToUserID" class="text-red-500 text-xs"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Reason" class="block text-gray-700 text-sm font-bold mb-2">Reason</label>
+                <textarea asp-for="Reason" class=" appearance-none border  w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:-outline" placeholder="Enter reason for infraction"></textarea>
+                <span asp-validation-for="Reason" class="text-red-500 text-xs"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="InfPointsGiven" class="block text-gray-700 text-sm font-bold mb-2">Infraction Points</label>
+                <input asp-for="InfPointsGiven" type="number" class=" appearance-none border  w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:-outline" placeholder="Enter infraction points">
+                <span asp-validation-for="InfPointsGiven" class="text-red-500 text-xs"></span>
+            </div>
+            <h2 class=" italic mb-5">Note: Once a user accumulates 20 or more infraction points, they will be automatically banned from accessing the forum</h2>
+
+            <button type="submit" class="bg-pale-green hover:bg-pale-green-dark text-white font-bold py-2 px-4  focus:outline-none focus:-outline">
+                Issue Infraction
+            </button>
+        </form>
+    </div>
+</section>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

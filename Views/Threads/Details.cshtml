@@ -1,0 +1,361 @@
+﻿@model forum_aspcore.Models.FThread
+
+@{
+    var userDictionary = ViewData["UserDictionary"] as Dictionary<string, FUser>;
+    var tagDictionary = ViewData["TagDictionary"] as Dictionary<string, FTag>;
+    var threadop = userDictionary[Model.UserID];
+}
+
+<div class="mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <!-- Alert Messages -->
+    @if (TempData["Error"] != null)
+    {
+        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            @TempData["Error"]
+        </div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Warning"] != null)
+    {
+        <div class="mb-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+            @TempData["Warning"]
+        </div>
+    }
+
+    <div class="flex border-2 border-black bg-coffee-brown-dark  lg:min-w-[1100px]" id="thread-@Model.ThreadID">
+        <!-- User Stats Section for Thread Starter -->
+        <div class="w-56 min-h-full border-r-2 border-black bg-[#f2e4bd] flex flex-col items-center p-4 rounded-l-lg">
+            <div class="w-full text-center ">
+                <h1 class="font-bold text-lg uppercase text-black underline">
+                    @* Clicking on user's name shows their profile *@
+                    <a href="@Url.Action("ViewProfile", "Users", new { id = Model.UserID })"
+                        class="hover:text-pale-green">
+                        @threadop.Username
+                    </a>
+                </h1>
+                <h1 class="uppercase text-coffee-cream mb-4">
+                    @threadop.Title
+                </h1>
+            </div>
+
+            <img src="@Url.Action("ProfilePicture", "Users", new { id = Model.UserID })" alt="Profile Picture"
+                class="w-32 h-32 object-cover border-2 border-coffee-brown-light">
+            <div class="mt-4 w-full text-start">
+                <h2 class="text-sm text-black">Posted @Model.CreatedAt.ToString("MMM dd, yyyy")</h2>
+                <h2 class="text-sm text-black">
+                    Reputation: @(threadop.RepPoints >= 10000 ? threadop.RepPoints?.ToString("N0") :
+                                        threadop.RepPoints?.ToString())
+                </h2>
+                <h2 class="text-sm text-black">Rep Power: @threadop.RepPower</h2>
+                <h2 class="text-sm text-black">Degree: @threadop.Degree</h2>
+                <h2 class="text-sm text-black">Year: @threadop.YearOfDegree</h2>
+                <div class="flex items-center mt-2">
+                    @if (threadop.RepPoints < 0)
+                    {
+                        @for (int i = 0; i < Math.Max(0, Math.Abs(threadop.RepPoints ?? 0) / 100); i++)
+                        {
+                            if (i > 14) break;
+                            <div class="w-2 h-6 bg-red-500  mr-1 border border-black border-opacity-70"></div>
+                        }
+                    }
+                    else
+                    {
+                        @for (int i = 0; i < Math.Max(1, (threadop.RepPower ?? 0) / 10); i++)
+                        {
+                            if (i > 14) break;
+                            <div class="w-2 h-6 bg-green-500  mr-1 border border-black border-opacity-70"></div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Thread Content Section -->
+        <div class="flex-grow bg-[#f0dead] relative">
+            <!-- Thread Title -->
+            <div class="px-6 py-4">
+                <h1 class="text-2xl font-bold text-black">@Model.Title</h1>
+            </div>
+
+            <!-- Thread Tags -->
+            <div class="px-6 py-2 flex gap-2">
+                @foreach (var tagId in Model.TagIDs)
+                {
+                    if (tagDictionary.TryGetValue(tagId, out var tag))
+                    {
+                        <span class="px-2 py-1 text-sm border border-black bg-coffee-brown rounded">
+                            @tag.Name
+                        </span>
+                    }
+                }
+            </div>
+
+            <!-- Thread Description -->
+            <div class="px-6 py-4">
+                <div class="prose prose-sm max-w-none text-gray-700">
+                    @{
+                        string description = Model.Description;
+                        description = System.Text.RegularExpressions.Regex.Replace(description, @"\[CODE    lang=""(\w+)""\](.*?)\[/CODE\]",
+                        m => $"<pre><code           class=\"language-{m.Groups[1].Value}\">{System.Net.WebUtility.HtmlEncode(m.Groups[2].Value)}</code></pre>",
+                        System.Text.RegularExpressions.RegexOptions.Singleline);
+                    }
+                    @Html.Raw(description)
+
+                    <div class="border-t border-black w-full mt-5">
+                        @Html.Raw(threadop.Signature)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reputation Buttons for Thread Starter -->
+            <form asp-action="ChangeReputation" asp-controller="Threads" method="post"
+                class="absolute right-5 bottom-5 flex gap-2">
+                <input type="hidden" name="UserID" value="@threadop.UserID" />
+                <input type="hidden" name="ThreadID" value="@Model.ThreadID" />
+
+                <button type="submit" name="change" value="upvote"
+                    class="w-6 h-6 bg-green-500 border border-black flex justify-center items-center hover:bg-green-600 transition-colors duration-200">
+                    +
+                </button>
+                <button type="submit" name="change" value="downvote"
+                    class="w-6 h-6 bg-red-500 border border-black flex justify-center items-center hover:bg-red-600 transition-colors duration-200">
+                    -
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Replies Section -->
+    <div class="mt-8">
+        <h2 class="text-xl font-semibold text-[#f2e4bd]">Replies</h2>
+
+        @if (Model.Replies == null || !Model.Replies.Any())
+        {
+            <p class="mt-4 text-[#f0dead]">No replies yet.</p>
+        }
+        else
+        {
+            <div class="mt-4 space-y-6">
+                @foreach (var reply in Model.Replies.OrderBy(r => r.DatePosted))
+                {
+                    var replyUser = userDictionary.ContainsKey(reply.UserID) ? userDictionary[reply.UserID] : null;
+                    if (replyUser == null)
+                    {
+                        continue;
+                    }
+                    <div class="flex border-2 border-black bg-gray-50 " id="reply-@reply.ReplyID">
+                        <div
+                            class="w-56 min-h-full border-r-2 border-black bg-[#f2e4bd] flex flex-col items-center p-4 rounded-l-lg">
+                            <div class="w-full text-center ">
+                                <h1 class="font-bold text-lg uppercase text-gray-700 mb-4">
+                                    @* Clicking on user's name shows their profile *@
+                                    <a href="@Url.Action("ViewProfile", "Users", new { id = reply.UserID })"
+                                        class="hover:text-blue-600">
+                                        @replyUser.Username
+                                    </a>
+                                </h1>
+                            </div>
+                            <img src="@Url.Action("ProfilePicture", "Users", new { id = reply.UserID })" alt="Profile Picture"
+                                class="w-32 h-32 object-cover border-2 border-gray-800">
+
+                            <div class="mt-4 w-full text-start">
+                                <h2 class="text-sm text-black">Posted @reply.DatePosted.ToString("MMM dd, yyyy")</h2>
+                                <h2 class="text-sm text-black">
+                                    Reputation: @(replyUser.RepPoints >= 10000 ? replyUser.RepPoints?.ToString("N0") :
+                                                                replyUser.RepPoints?.ToString())
+                                </h2>
+                                <h2 class="text-sm text-black">Rep Power: @replyUser.RepPower</h2>
+                                <h2 class="text-sm text-black">Degree: @replyUser.Degree</h2>
+                                <h2 class="text-sm text-black">Year: @replyUser.YearOfDegree</h2>
+                                <div class="flex items-center mt-2">
+                                    <!-- Green bars for reputation power -->
+
+                                    @if (replyUser.RepPoints < 0)
+                                    {
+                                        @for (int i = 0; i < Math.Max(0, Math.Abs(replyUser.RepPoints ?? 0) / 100); i++)
+                                        {
+                                            if (i > 14) break;
+                                            <div class="w-2 h-6 bg-red-500  mr-1 border border-black border-opacity-70"></div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @for (int i = 0; i < Math.Max(1, (replyUser.RepPower ?? 0) / 10); i++)
+                                        {
+                                            if (i > 14) break;
+                                            <div class="w-2 h-6 bg-green-500  mr-1 border border-black border-opacity-70"></div>
+                                        }
+                                    }
+
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reply Content Section -->
+                        <div class="flex-grow bg-[#f0dead]  relative">
+                            <!-- Reply Content -->
+                            <div class="px-6 py-4">
+                                <div class="text-sm text-black">
+                                    @{
+                                        string replyContent = reply.Content;
+                                        replyContent = System.Text.RegularExpressions.Regex.Replace(replyContent, @"\[CODE                  lang=""(\w+)""\](.*?)\[/CODE\]",
+                                        m => $"<pre><code                        class=\"language-{m.Groups[1].Value}\">{System.Net.WebUtility.HtmlEncode(m.Groups[2].Value)}</code></pre>",
+                                        System.Text.RegularExpressions.RegexOptions.Singleline);
+                                    }
+                                    @Html.Raw(replyContent)
+
+                                    <div class="border-t border-black w-full mt-5">
+                                        @Html.Raw(replyUser.Signature)
+                                    </div>
+                                </div>
+                                <!-- Reputation Buttons for Replying User -->
+                                <form asp-action="ChangeReputation" asp-controller="Threads" method="post"
+                                    class="absolute right-5 bottom-5 flex gap-2">
+                                    <input type="hidden" name="UserID" value="@replyUser.UserID" />
+                                    <input type="hidden" name="ThreadID" value="@Model.ThreadID" />
+
+                                    <button type="submit" name="change" value="upvote"
+                                        class="w-6 h-6 bg-green-500 border border-black flex justify-center items-center hover:bg-green-600 transition-colors duration-200">
+                                        +
+                                    </button>
+                                    <button type="submit" name="change" value="downvote"
+                                        class="w-6 h-6 bg-red-500 border border-black flex justify-center items-center hover:bg-red-600 transition-colors duration-200">
+                                        -
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Quick Reply Section -->
+        <div class="mt-6 bg-[#f0dead] border-2 border-black  p-4">
+            <h3 class="text-lg font-medium text-gray-800">Quick Reply</h3>
+            <form asp-action="PostReply" asp-controller="Threads" method="post">
+                <input type="hidden" name="ThreadID" value="@Model.ThreadID" />
+                <textarea name="Content" rows="5"
+                    class="w-full mt-4 p-2 border-2 border-black text-sm text-gray-700 outline-none"
+                    placeholder="Write your reply here..."></textarea>
+
+                <!-- Formatting Options -->
+                <div class="mt-2 flex items-center space-x-2 flex-wrap">
+                    <button type="button" onclick="addFormatting('bold')"
+                        class="px-3 py-1 bg-white border border-black text-black hover:bg-gray-100 text-sm">
+                        <strong>B</strong>
+                    </button>
+                    <button type="button" onclick="addFormatting('italic')"
+                        class="px-3 py-1 bg-white border border-black text-black hover:bg-gray-100 text-sm">
+                        <em>I</em>
+                    </button>
+                    <button type="button" onclick="addFormatting('underline')"
+                        class="px-3 py-1 bg-white border border-black text-black hover:bg-gray-100 text-sm">
+                        <u>U</u>
+                    </button>
+                    <button type="button" onclick="addFormatting('quote')"
+                        class="px-3 py-1 bg-white border border-black text-black hover:bg-gray-100 text-sm">
+                        <i class="fa fa-quote-left"></i> Quote
+                    </button>
+
+                    <!-- Language-Specific Code Buttons -->
+                    <button type="button" onclick="addCodeBlock('csharp')"
+                        class="px-3 py-1 bg-white border border-black text-black hover:bg-gray-100 text-sm">
+                        <i class="fa fa-code"></i> C#
+                    </button>
+                    <button type="button" onclick="addCodeBlock('cpp')"
+                        class="px-3 py-1 bg-white border border-black text-black hover:bg-gray-100 text-sm">
+                        <i class="fa fa-code"></i> C++
+                    </button>
+                    <button type="button" onclick="addCodeBlock('c')"
+                        class="px-3 py-1 bg-white border border-black text-black hover:bg-gray-100 text-sm">
+                        <i class="fa fa-code"></i> C
+                    </button>
+                    <button type="button" onclick="addCodeBlock('python')"
+                        class="px-3 py-1 bg-white border border-black text-black hover:bg-gray-100 text-sm">
+                        <i class="fab fa-python"></i> Python
+                    </button>
+                    <button type="button" onclick="addCodeBlock('rust')"
+                        class="px-3 py-1 bg-white border border-black text-black hover:bg-gray-100 text-sm">
+                        <i class="fa fa-code"></i> Rust
+                    </button>
+                    <button type="button" onclick="addCodeBlock('assembly')"
+                        class="px-3 py-1 bg-white border border-black text-black hover:bg-gray-100 text-sm">
+                        <i class="fa fa-code"></i> Assembly
+                    </button>
+                </div>
+
+
+                <div class="mt-4">
+                    <button type="submit"
+                        class="px-3 py-1 border-2 border-black bg-pale-green text-white font-medium  hover:bg-pale-green-dark focus:outline-none focus:ring-2 focus:ring-pale-green">
+                        Post Reply
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addFormatting(type) {
+        var textarea = document.querySelector("textarea[name='Content']");
+        var selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+        var formattedText = "";
+
+        switch (type) {
+            case 'bold':
+                formattedText = `[b]${selection}[/b]`;
+                break;
+            case 'italic':
+                formattedText = `[i]${selection}[/i]`;
+                break;
+            case 'underline':
+                formattedText = `[u]${selection}[/u]`;
+                break;
+            case 'quote':
+                formattedText = `[quote]${selection}[/quote]`;
+                break;
+            // Removed 'code' here as we have language-specific buttons
+        }
+
+        var before = textarea.value.substring(0, textarea.selectionStart);
+        var after = textarea.value.substring(textarea.selectionEnd);
+        textarea.value = before + formattedText + after;
+
+        // Optionally, set the cursor position after the inserted text
+        textarea.focus();
+        var cursorPosition = before.length + formattedText.length;
+        textarea.setSelectionRange(cursorPosition, cursorPosition);
+    }
+
+    function addCodeBlock(language) {
+        var textarea = document.querySelector("textarea[name='Content']");
+        var selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+        var placeholder = '';
+        var codeContent = selection || placeholder;
+        var formattedText = `[CODE lang="${language}"]\n${codeContent}\n[/CODE]`;
+
+        var before = textarea.value.substring(0, textarea.selectionStart);
+        var after = textarea.value.substring(textarea.selectionEnd);
+        textarea.value = before + formattedText + after;
+
+        // Optionally, set the cursor inside the code block if no selection was made
+        textarea.focus();
+        if (!selection || selection === placeholder) {
+            var cursorPosition = before.length + `[CODE lang="${language}"]\n`.length;
+            textarea.setSelectionRange(cursorPosition, cursorPosition + placeholder.length);
+        } else {
+            // Move cursor to after the inserted code block
+            var cursorPosition = before.length + formattedText.length;
+            textarea.setSelectionRange(cursorPosition, cursorPosition);
+        }
+    }
+</script>

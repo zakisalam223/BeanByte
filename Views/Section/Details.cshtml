@@ -1,0 +1,106 @@
+@model IEnumerable<forum_aspcore.Models.FThread>
+
+@{
+    ViewData["Title"] = "Section Details";
+    var currentSection = (FSection)ViewData["Section"];
+    var userDictionary = ViewData["UserDictionary"] as Dictionary<string, FUser>;
+    var tagDictionary = ViewData["TagDictionary"] as Dictionary<string, FTag>;
+}
+
+<div class="w-full py-12 px-4 sm:px-6 lg:px-36">
+    <div class="mb-8 flex items-start justify-between">
+        <div class="flex flex-col space-y-2">
+            <a href="@Url.Action("Index", "Section")"
+                class="inline-flex items-center text-coffee-cream hover:text-pale-green">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                    class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+                </svg>
+                <span class="ml-2">Back to Sections</span>
+            </a>
+            <h1 class="absolute left-1/2 transform -translate-x-1/2 text-3xl font-bold text-coffee-cream">@currentSection.SectionName</h1>
+        </div>
+
+        <a href="@Url.Action("Create", "Threads", new { sectionId = currentSection.SectionID })"
+            class="border-2 border-black px-4 py-2 bg-pale-green text-white font-medium hover:bg-pale-green-dark focus:outline-none focus:ring-2 focus:ring-pale-green">
+            Create Thread
+        </a>
+    </div>
+
+    <div class="mb-8">
+        <form method="get" class="flex gap-4 max-w-2xl mx-auto">
+            <input type="hidden" name="id" value="@currentSection.SectionID" />
+            <div class="flex-grow">
+                <input type="text" name="searchTerm" value="@ViewData["CurrentSearch"]" placeholder="Search threads..."
+                    class="w-full px-4 py-2 border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream placeholder-coffee-cream rounded-lg focus:ring-2 focus:ring-pale-green focus:border-pale-green">
+            </div>
+            <button type="submit"
+                class="border-2 border-black px-4 py-2 bg-pale-green text-white font-medium hover:bg-pale-green-dark focus:outline-none focus:ring-2 focus:ring-pale-green">
+                Search
+            </button>
+            @if (!string.IsNullOrEmpty((string)ViewData["CurrentSearch"]))
+            {
+                <a href="@Url.Action("Details", new { id = currentSection.SectionID })"
+                    class="px-6 py-2 bg-coffee-brown text-coffee-cream hover:bg-coffee-brown-light focus:outline-none focus:ring-2 focus:ring-pale-green focus:ring-offset-2">
+                    Clear
+                </a>
+            }
+        </form>
+    </div>
+
+    <div class="bg-[#f0dead] shadow overflow-hidden sm:rounded-lg w-full">
+        <div class="divide-y divide-coffee-brown-light">
+            @if (!Model.Any())
+            {
+                <div class="p-6 text-center">
+                    <p class="text-black">No threads have been created in this section yet.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var thread in Model)
+                {
+                    <a href="@Url.Action("Details", "Threads", new { id = thread.ThreadID })" class="block w-full">
+                        <div class="w-full px-6 py-4 hover:bg-[#f2e4bd]">
+                            <h3 class="text-lg font-semibold text-coffee-cream">
+                                <span class="text-[#523302]">@thread.Title</span>
+                            </h3>
+                            <p class="mt-2 text-sm text-black">@thread.Description</p>
+
+                            @if (thread.TagIDs != null && thread.TagIDs.Any() && tagDictionary != null)
+                            {
+                                <div class="mt-2 flex flex-wrap gap-2">
+                                    @foreach (var tagId in thread.TagIDs)
+                                    {
+                                        if (tagDictionary.TryGetValue(tagId, out var tag))
+                                        {
+                                            <span class="px-2 py-1 text-sm border border-black bg-coffee-brown rounded">
+                                                @tag.Name
+                                            </span>
+                                        }
+                                    }
+                                </div>
+                            }
+
+                        <div class="mt-4 flex flex-wrap items-center text-sm text-[#523302]">
+                            <span class="mr-4">
+                                <strong>Created At:</strong> @thread.CreatedAt.ToString("MMM dd, yyyy")
+                            </span>
+                            <span class="mr-4">
+                                <strong>Topic:</strong> @thread.Topic
+                            </span>
+                            <span>
+                                <strong>Created By:</strong>
+                                @(userDictionary != null && userDictionary.ContainsKey(thread.UserID) ?
+                                                            userDictionary[thread.UserID].Username : "Unknown User")
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                }
+            }
+        </div>
+    </div>
+</div>

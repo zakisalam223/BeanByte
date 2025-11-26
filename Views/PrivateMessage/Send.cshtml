@@ -1,0 +1,46 @@
+@model forum_aspcore.Models.FPrivateMessage
+
+@{
+    ViewData["Title"] = "Send Message";
+}
+
+<div class="container-fluid mx-auto px-4 py-12 max-w-7xl">
+    <div class="bg-coffee-brown-dark shadow-lg rounded-lg p-8">
+
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-3xl font-extrabold text-coffee-cream">Send Message</h1>
+            <a href="/PrivateMessage/Inbox" 
+               class="text-sm font-medium text-coffee-cream hover:text-pale-green hover:underline">
+                Back to Inbox
+            </a>
+        </div>
+
+        <div class="mb-8">
+            <p class="text-lg text-coffee-cream">
+                <strong>Recipient:</strong> <span class="font-medium text-coffee-cream">@Model.RecipientUsername</span>
+            </p>
+        </div>
+
+        <form asp-action="Send" method="post" class="space-y-6">
+            <input type="hidden" name="recipientUsername" value="@Model.RecipientUsername" />
+
+            <div>
+                <label for="content" class="block text-sm font-semibold text-coffee-cream mb-2">Message</label>
+                <textarea id="content" name="content" rows="6" placeholder="Type your message here..."
+                          class="block w-full rounded-lg border-2 border-coffee-brown-light p-4 focus:outline-none focus:ring-2 focus:ring-pale-green bg-coffee-brown text-coffee-cream placeholder-coffee-cream sm:text-sm shadow-sm transition"
+                          required></textarea>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <a href="/PrivateMessage/Inbox" 
+                   class="inline-flex justify-center px-4 py-2 bg-coffee-brown text-coffee-cream font-medium hover:bg-coffee-brown-light focus:outline-none focus:ring-2 focus:ring-pale-green">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="inline-flex justify-center px-4 py-2 bg-pale-green text-white font-medium hover:bg-pale-green-dark focus:outline-none focus:ring-2 focus:ring-pale-green">
+                    Send Message
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

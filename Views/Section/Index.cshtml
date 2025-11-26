@@ -1,0 +1,52 @@
+@model IEnumerable<forum_aspcore.Models.FSection>
+
+@{
+    ViewData["Title"] = "Forum Sections";
+}
+
+<div class="w-full py-12 px-4 sm:px-6 lg:px-36">
+    <!-- Search Bar -->
+    <div class="mb-8">
+        <form method="get" class="flex gap-4 max-w-2xl mx-auto">
+            <div class="flex-grow">
+                <input type="text" name="searchTerm" value="@ViewData["CurrentSearch"]" placeholder="Search sections..."
+                    class="w-full px-4 py-2 border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream placeholder-coffee-cream rounded-lg focus:ring-2 focus:ring-pale-green focus:border-pale-green">
+            </div>
+            <button type="submit"
+                class="px-4 py-1 border-2 border-black bg-pale-green text-white font-medium  hover:bg-pale-green-dark focus:outline-none focus:ring-2 focus:ring-pale-green">
+                Search
+            </button>
+            @if (!string.IsNullOrEmpty((string)ViewData["CurrentSearch"]))
+            {
+                <a href="@Url.Action("Index")"
+                    class="px-6 py-2 bg-coffee-brown text-coffee-cream hover:bg-coffee-brown-light focus:outline-none focus:ring-2 focus:ring-pale-green focus:ring-offset-2">
+                    Clear
+                </a>
+            }
+        </form>
+    </div>
+
+    <div class="border-2 border-black bg-[#f0dead] shadow overflow-hidden sm:rounded-lg w-full">
+        <div class="divide-y divide-coffee-brown-light">
+            @if (!Model.Any())
+            {
+                <div class="p-6 text-center">
+                    <p class="text-coffee-cream">No sections have been created yet.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var forumSection in Model)
+                {
+                    <a href="@Url.Action("Details", "Section", new { id = forumSection.SectionID })" class="block w-full">
+                        <div class="w-full px-6 py-4 hover:bg-[#f2e4bd]">
+                            <h2 class="text-xl font-semibold text-[#523302]">
+                                @forumSection.SectionName
+                            </h2>
+                        </div>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+</div>

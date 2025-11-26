@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Forum Application</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/output.css">
+    <link rel="stylesheet" href="~/css/Layout.css" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body class="bg-coffee-brown text-coffee-cream flex flex-col min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-coffee-brown-dark border-b border-coffee-brown-light sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a asp-controller="Section" asp-action="Index" class="text-2xl font-bold text-coffee-cream">BeanByte</a>
+                </div>
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <!-- Create Thread -->
+                    <a asp-controller="Threads" asp-action="Create"
+                        class="flex items-center text-lg font-medium text-coffee-cream hover:text-pale-green transition duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                            class="bi bi-feather" viewBox="0 0 16 16">
+                            <path
+                                d="M15.807.531c-.174-.177-.41-.289-.64-.363a3.8 3.8 0 0 0-.833-.15c-.62-.049-1.394 0-2.252.175C10.365.545 8.264 1.415 6.315 3.1S3.147 6.824 2.557 8.523c-.294.847-.44 1.634-.429 2.268.005.316.05.62.154.88q.025.061.056.122A68 68 0 0 0 .08 15.198a.53.53 0 0 0 .157.72.504.504 0 0 0 .705-.16 68 68 0 0 1 2.158-3.26c.285.141.616.195.958.182.513-.02 1.098-.188 1.723-.49 1.25-.605 2.744-1.787 4.303-3.642l1.518-1.55a.53.53 0 0 0 0-.739l-.729-.744 1.311.209a.5.5 0 0 0 .443-.15l.663-.684c.663-.68 1.292-1.325 1.763-1.892.314-.378.585-.752.754-1.107.163-.345.278-.773.112-1.188a.5.5 0 0 0-.112-.172M3.733 11.62C5.385 9.374 7.24 7.215 9.309 5.394l1.21 1.234-1.171 1.196-.027.03c-1.5 1.789-2.891 2.867-3.977 3.393-.544.263-.99.378-1.324.39a1.3 1.3 0 0 1-.287-.018Zm6.769-7.22c1.31-1.028 2.7-1.914 4.172-2.6a7 7 0 0 1-.4.523c-.442.533-1.028 1.134-1.681 1.804l-.51.524zm3.346-3.357C9.594 3.147 6.045 6.8 3.149 10.678c.007-.464.121-1.086.37-1.806.533-1.535 1.65-3.415 3.455-4.976 1.807-1.561 3.746-2.36 5.31-2.68a8 8 0 0 1 1.564-.173" />
+                        </svg>
+                        Create Thread
+                    </a>
+
+                    <!-- Create Section -->
+                    <a asp-controller="Section" asp-action="Create"
+                        class="flex items-center text-lg font-medium text-coffee-cream hover:text-pale-green transition duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
+                            class="mr-2 bi bi-folder-plus" viewBox="0 0 16 16">
+                            <path
+                                d="m.5 3 .04.87a2 2 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2m5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19q-.362.002-.683.12L1.5 2.98a1 1 0 0 1 1-.98z" />
+                            <path
+                                d="M13.5 10a.5.5 0 0 1 .5.5V12h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V13h-1.5a.5.5 0 0 1 0-1H13v-1.5a.5.5 0 0 1 .5-.5" />
+                        </svg>
+                        Create Section
+                    </a>
+
+                    <!-- Messages -->
+                    <a asp-controller="PrivateMessage" asp-action="Inbox"
+                        class="flex items-center text-lg font-medium text-coffee-cream hover:text-pale-green transition duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-envelope-check mr-1" viewBox="0 0 16 16">
+                            <path
+                                d="M2 2a2 2 0 0 0-2 2v8.01A2 2 0 0 0 2 14h5.5a.5.5 0 0 0 0-1H2a1 1 0 0 1-.966-.741l5.64-3.471L8 9.583l7-4.2V8.5a.5.5 0 0 0 1 0V4a2 2 0 0 0-2-2zm3.708 6.208L1 11.105V5.383zM1 4.217V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v.217l-7 4.2z" />
+                            <path
+                                d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0m-1.993-1.679a.5.5 0 0 0-.686.172l-1.17 1.95-.547-.547a.5.5 0 0 0-.708.708l.774.773a.75.75 0 0 0 1.174-.144l1.335-2.226a.5.5 0 0 0-.172-.686" />
+                        </svg>
+                        Messages
+                    </a>
+
+                    <!-- My Files -->
+                    <a asp-controller="File" asp-action="Index"
+                        class="flex items-center text-lg font-medium text-coffee-cream hover:text-pale-green transition duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-file-binary" viewBox="0 0 16 16">
+                            <path
+                                d="M5.526 13.09c.976 0 1.524-.79 1.524-2.205 0-1.412-.548-2.203-1.524-2.203-.978 0-1.526.79-1.526 2.203 0 1.415.548 2.206 1.526 2.206zm-.832-2.205c0-1.05.29-1.612.832-1.612.358 0 .607.247.733.721L4.7 11.137a7 7 0 0 1-.006-.252m.832 1.614c-.36 0-.606-.246-.732-.718l1.556-1.145q.005.12.005.249c0 1.052-.29 1.614-.829 1.614m5.329.501v-.595H9.73V8.772h-.69l-1.19.786v.688L8.986 9.5h.05v2.906h-1.18V13h3z" />
+                            <path
+                                d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1" />
+                        </svg>
+                        My Files
+                    </a>
+
+                    <!-- Admin Pending Files (Visible only to Admins) -->
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="File" asp-action="AdminPendingFiles"
+                            class="flex items-center text-lg font-medium text-coffee-cream hover:text-pale-green transition duration-150">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
+                                class="mr-1 bi bi-database-fill-gear" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 1c-1.573 0-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4s.875 1.755 1.904 2.223C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777C13.125 5.755 14 5.007 14 4s-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1" />
+                                <path
+                                    d="M2 7v-.839c.457.432 1.004.751 1.49.972C4.722 7.693 6.318 8 8 8s3.278-.307 4.51-.867c.486-.22 1.033-.54 1.49-.972V7c0 .424-.155.802-.411 1.133a4.51 4.51 0 0 0-4.815 1.843A12 12 0 0 1 8 10c-1.573 0-3.022-.289-4.096-.777C2.875 8.755 2 8.007 2 7m6.257 3.998L8 11c-1.682 0-3.278-.307-4.51-.867-.486-.22-1.033-.54-1.49-.972V10c0 1.007.875 1.755 1.904 2.223C4.978 12.711 6.427 13 8 13h.027a4.55 4.55 0 0 1 .23-2.002m-.002 3L8 14c-1.682 0-3.278-.307-4.51-.867-.486-.22-1.033-.54-1.49-.972V13c0 1.007.875 1.755 1.904 2.223C4.978 15.711 6.427 16 8 16c.536 0 1.058-.034 1.555-.097a4.5 4.5 0 0 1-1.3-1.905m3.631-4.538c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382zM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0" />
+                            </svg>
+                            Pending Files
+                        </a>
+                        <a asp-controller="Admin" asp-action="IssueInfraction"
+                            class="flex items-center text-lg font-medium text-coffee-cream hover:text-pale-green transition duration-150">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
+                                class="mr-1 bi bi-ban" viewBox="0 0 16 16">
+                                <path
+                                    d="M15 8a6.97 6.97 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0" />
+                            </svg>
+                            Infractions
+                        </a>
+                    }
+                </div>
+
+                <!-- Authentication Links -->
+                <div class="flex items-center space-x-4">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <!-- Profile -->
+                        <a asp-controller="Users" asp-action="Details"
+                            class="flex items-center text-lg font-medium text-coffee-cream hover:text-pale-green transition duration-150">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-person mr-1" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                            </svg>
+                            Profile
+                        </a>
+
+                        <!-- Logout -->
+                        <form asp-controller="Users" asp-action="Logout" method="post" class="inline">
+                            <button type="submit"
+                                class="text-lg font-medium text-coffee-cream hover:text-red-500 transition duration-150">
+                                Logout
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <!-- Register & Login -->
+                        <a href="/Users/Register"
+                            class="text-lg font-medium text-coffee-cream hover:text-pale-green transition duration-150">
+                            Register
+                        </a>
+                        <a href="/Users/Login"
+                            class="text-lg font-medium text-coffee-cream hover:text-pale-green transition duration-150">
+                            Login
+                        </a>
+                    }
+                </div>
+            </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="">
+        @RenderBody()
+    </main>
+
+    @* <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-sm">&copy; @DateTime.Now.Year - Forum Application. All Rights Reserved.</p>
+            <div class="mt-4">
+                <a href="/Privacy" class="text-gray-400 hover:text-white mx-2">Privacy Policy</a>
+                <a href="/Terms" class="text-gray-400 hover:text-white mx-2">Terms of Service</a>
+                <a href="/Contact" class="text-gray-400 hover:text-white mx-2">Contact Us</a>
+            </div>
+        </div>
+    </footer> *@
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

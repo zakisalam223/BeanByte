@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Upload File";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-lg mx-auto">
+        <h2 class="text-2xl font-bold mb-4 text-coffee-cream">Upload File</h2>
+        
+        <form asp-action="UploadFile" method="post" enctype="multipart/form-data">
+            @if (TempData["Error"] != null)
+            {
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 mb-4">
+                    @TempData["Error"]
+                </div>
+            }
+            
+            <div class="mb-4">
+                <input type="file" name="file" class="border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream p-2 w-full" required />
+            </div>
+
+            <div>
+                <button type="submit" class="border-2 border-black bg-pale-green text-white px-4 py-2 hover:bg-pale-green-dark">
+                    Upload
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

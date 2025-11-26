@@ -1,0 +1,24 @@
+﻿@* Views/Error/UnauthorizedPage.cshtml *@
+@{
+    ViewData["Title"] = "Unauthorized Access";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure it uses your main layout
+}
+
+<div class="max-w-2xl mx-auto bg-coffee-brown-dark shadow-lg rounded-lg p-8 mt-16 border border-coffee-brown-light">
+    <div class="text-center">
+        <h1 class="text-5xl font-extrabold text-red-500 mb-6">Error 401</h1>
+        <h2 class="text-2xl font-bold text-coffee-cream mb-4">Unauthorized Access</h2>
+        <p class="text-coffee-cream text-lg mb-8">
+            You do not have permission to access this page.
+        </p>
+        <div class="mb-8">
+            <p class="text-coffee-cream text-sm">
+                If you believe this is a mistake, please contact the administrator.
+            </p>
+        </div>
+        <a href="/"
+           class="inline-block px-5 py-3 bg-pale-green text-white text-lg font-medium rounded-md shadow-md hover:bg-pale-green-dark focus:outline-none focus:ring-2 focus:ring-pale-green focus:ring-offset-2">
+            Go to Home
+        </a>
+    </div>
+</div>

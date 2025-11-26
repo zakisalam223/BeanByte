@@ -1,0 +1,106 @@
+@model IEnumerable<forum_aspcore.Models.FFile>
+
+@{
+    ViewData["Title"] = "Files";
+}
+
+<div class="container mx-auto px-4 py-12">
+    <div class="mb-8 text-center">
+        <h1 class="text-4xl font-extrabold text-coffee-cream mb-4">My Files</h1>
+        <p class="text-coffee-cream text-sm mb-6 italic">
+            <strong>Note:</strong> all files uploaded here are publicly accessible if their download links are shared. Do not upload private files.
+        </p>
+        <a href="@Url.Action("Upload", "File")" 
+           class="border-2 border-black bg-pale-green hover:bg-pale-green-dark text-white font-semibold py-2 px-4 inline-flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5-.4H5V1.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5V9.5h4a.5.5 0 0 1 .4.8L8 15.5l-7.9-5.2a.5.5 0 0 1-.1-.4z"/>
+            </svg>
+            Upload New File
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 text-center max-w-2xl mx-auto">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 text-center max-w-2xl mx-auto">
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="bg-coffee-brown-dark text-center py-16 rounded-lg">
+            <p class="text-lg font-medium text-coffee-cream">You haven't uploaded any files yet.</p>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto bg-coffee-brown-dark shadow-md rounded-lg">
+            <table class="w-full border-collapse border border-coffee-brown-light">
+                <thead class="bg-coffee-brown">
+                    <tr>
+                        <th class="border border-coffee-brown-light px-4 py-2 text-left text-sm font-medium text-coffee-cream">File Name</th>
+                        <th class="border border-coffee-brown-light px-4 py-2 text-left text-sm font-medium text-coffee-cream">Upload Date</th>
+                        <th class="border border-coffee-brown-light px-4 py-2 text-left text-sm font-medium text-coffee-cream">Status</th>
+                        <th class="border border-coffee-brown-light px-4 py-2 text-left text-sm font-medium text-coffee-cream">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var file in Model)
+                    {
+                        <tr class="odd:bg-coffee-brown-dark even:bg-coffee-brown">
+                            <td class="border border-coffee-brown-light px-4 py-2 text-coffee-cream">@file.Filename</td>
+                            <td class="border border-coffee-brown-light px-4 py-2 text-coffee-cream">@file.UploadDate.ToString("MMM dd, yyyy")</td>
+                            <td class="border border-coffee-brown-light px-4 py-2 text-coffee-cream">
+                                @(file.Status ? "Verified" : "Pending")
+                            </td>
+                            <td class="border border-coffee-brown-light px-4 py-2">
+                                <div class="flex items-center gap-4">
+                                    <a href="@Url.Action("Download", "File", new { id = file.FileID })" 
+                                       class="text-pale-green hover:underline">
+                                        Download
+                                    </a>
+                                    
+                                    <button onclick="copyDownloadLink('@Url.Action("Download", "File", new { id = file.FileID })', event)" 
+                                            class="text-coffee-cream hover:text-pale-green hover:underline">
+                                        Copy Link
+                                    </button>
+
+                                    <a href="@Url.Action("DeleteFile", "File", new { id = file.FileID })"
+                                       class="text-red-600 hover:underline">
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<script>
+async function copyDownloadLink(url, event) {
+    event.preventDefault();
+    const fullUrl = window.location.origin + url;
+    
+    try {
+        await navigator.clipboard.writeText(fullUrl);
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = 'Copied';
+        setTimeout(() => {
+            button.textContent = originalText;
+        }, 2000);
+    } catch (err) {
+        console.error('Failed to copy link:', err);
+    }
+}
+</script>

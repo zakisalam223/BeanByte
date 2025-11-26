@@ -1,0 +1,86 @@
+@* Views/Users/EditProfile.cshtml *@
+@model forum_aspcore.Models.FUser
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="max-w-4xl mx-auto bg-gray-50 p-6 mt-8">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">Edit Profile</h1>
+    <form method="post" asp-controller="Users" asp-action="EditProfile" enctype="multipart/form-data">
+        <div class="space-y-4">
+            <div class="flex items-center space-x-4">
+                <div>
+                    <img src="@Url.Action("ProfilePicture", "Users", new { id = Model.UserID })" alt="Profile Picture" class="w-24 h-24 object-cover rounded-full border-2 border-gray-300">
+                </div>
+                <div>
+                    <label for="profilePicture" class="block text-gray-700 font-medium">Change Profile Picture</label>
+                    <input type="file" id="profilePicture" name="ProfilePicture" accept="image/*" class="mt-1 p-2 border focus:ring-pale-green focus:border-pale-green">
+                </div>
+            </div>
+
+            <div>
+                <label for="title" class="block text-gray-700 font-medium">Role</label>
+                <select id="title" name="Title" class="w-full mt-1 p-2 border focus:ring-pale-green focus:border-pale-green" onchange="toggleFields()">
+                    <option value="">Select Role</option>
+                    <option value="Student" selected=@(Model.Title == "Student")>Student</option>
+                    <option value="TA" selected=@(Model.Title == "TA")>TA</option>
+                    <option value="Professor" selected=@(Model.Title == "Professor")>Professor</option>
+                </select>
+            </div>
+
+            <div id="ucidField" style="display: @(Model.Title == "Student" ? "block" : "none")">
+                <label for="ucid" class="block text-gray-700 font-medium">UCID</label>
+                <input type="text" id="ucid" name="UCID" class="w-full mt-1 p-2 border focus:ring-pale-green focus:border-pale-green" value="@Model.UCID">
+            </div>
+
+            <div id="adminIdField" style="display: @(Model.Title == "Professor" ? "block" : "none")">
+                <label for="adminID" class="block text-gray-700 font-medium">Professor ID</label>
+                <input type="text" id="adminID" name="AdminID" class="w-full mt-1 p-2 border focus:ring-pale-green focus:border-pale-green" value="@Model.AdminID">
+            </div>
+
+            <div id="courseField" style="display: @(Model.Title == "TA" || Model.Title == "Professor" ? "block" : "none")">
+                <label for="course" class="block text-gray-700 font-medium">Course</label>
+                <input type="text" id="course" name="Course" class="w-full mt-1 p-2 border focus:ring-pale-green focus:border-pale-green" value="@Model.Course">
+            </div>
+
+            <div>
+                <label for="bio" class="block text-gray-700 font-medium">Bio</label>
+                <textarea id="bio" name="Bio" rows="4" class="w-full mt-1 p-2 border focus:ring-pale-green focus:border-pale-green">@Model.Bio</textarea>
+            </div>
+
+            <div>
+                <label for="degree" class="block text-gray-700 font-medium">Degree</label>
+                <input type="text" id="degree" name="Degree" class="w-full mt-1 p-2 border focus:ring-pale-green focus:border-pale-green" value="@Model.Degree">
+            </div>
+
+            <div>
+                <label for="yearOfDegree" class="block text-gray-700 font-medium">Year of Degree</label>
+                <input type="number" id="yearOfDegree" name="YearOfDegree" class="w-full mt-1 p-2 border focus:ring-pale-green focus:border-pale-green" value="@Model.YearOfDegree">
+            </div>
+
+            <div>
+                <label for="signature" class="block text-gray-700 font-medium">Signature</label>
+                <textarea id="signature" name="Signature" rows="2" class="w-full mt-1 p-2 border focus:ring-pale-green focus:border-pale-green">@Model.Signature</textarea>
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <button type="submit" class="px-4 py-2 bg-pale-green text-white font-medium hover:bg-pale-green-dark">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function toggleFields() {
+        var title = document.getElementById("title").value;
+        document.getElementById("ucidField").style.display = (title === "Student") ? "block" : "none";
+        document.getElementById("adminIdField").style.display = (title === "Professor") ? "block" : "none";
+        document.getElementById("courseField").style.display = (title === "TA" || title === "Professor") ? "block" : "none";
+    }
+    document.addEventListener("DOMContentLoaded", function(){
+        toggleFields();
+    });
+</script>

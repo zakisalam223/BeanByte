@@ -1,0 +1,40 @@
+@model forum_aspcore.Models.FPrivateMessage
+
+@{
+    ViewData["Title"] = "Message Details";
+    bool isSentMessage = (bool)ViewData["IsSentMessage"];
+}
+
+<div class="container-fluid mx-auto px-4 py-12 max-w-7xl">
+    <div class="bg-coffee-brown-dark shadow overflow-hidden sm:rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-coffee-cream">
+                    @(isSentMessage ? $"Message to {Model.RecipientUsername}" : $"Message from {Model.SenderUsername}")
+                </h1>
+                <a href="@Url.Action("Inbox")" class="text-pale-green hover:text-pale-green-light">Back to Inbox</a>
+            </div>
+        </div>
+        
+        <div class="px-6 py-4">
+            <div class="mb-4">
+                <p class="text-sm text-coffee-cream">Sent on @Model.DateSent.ToString("f")</p>
+            </div>
+            
+            <div class="prose max-w-none">
+                <p class="text-white">@Model.Content</p>
+            </div>
+            
+            @* Not showing the reply button if the user is just looking at their own sent message *@
+            @if (!isSentMessage)
+            {
+                <div class="mt-6 flex space-x-4">
+                    <a href="@Url.Action("Send", new { recipientUsername = Model.SenderUsername })" 
+                       class="inline-flex justify-center bg-pale-green px-4 py-2 text-sm font-medium text-white hover:bg-pale-green-dark">
+                        Reply
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

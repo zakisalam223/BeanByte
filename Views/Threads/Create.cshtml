@@ -1,0 +1,153 @@
+@model forum_aspcore.Models.FThread
+
+@{
+    ViewData["Title"] = "Create Thread";
+}
+
+<div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-coffee-brown-dark shadow-sm rounded-lg p-6">
+            <h2 class="text-2xl font-bold text-coffee-cream mb-6">Create New Thread</h2>
+            
+            <form asp-action="Create" method="post">
+                @Html.ValidationSummary(true, "", new { @class = "text-red-500 text-sm mb-4" })
+                
+                <div class="space-y-6">
+                    <div>
+                        <label asp-for="Title" class="block text-sm font-medium text-coffee-cream">Title</label>
+                        <input asp-for="Title" placeholder="e.g Assignment 2 Question 1" class="mt-1 block w-full rounded-md border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream placeholder-coffee-cream px-3 py-2 focus:border-pale-green focus:outline-none focus:ring-pale-green sm:text-sm" />
+                        <span asp-validation-for="Title" class="text-red-500 text-xs"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Description" class="block text-sm font-medium text-coffee-cream">Description</label>
+                        <textarea asp-for="Description" rows="8" class="mt-1 block w-full rounded-md border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream px-3 py-2 focus:border-pale-green focus:outline-none focus:ring-pale-green sm:text-sm"></textarea>
+                        <span asp-validation-for="Description" class="text-red-500 text-xs"></span>
+                        
+                        <!-- Formatting Options -->
+                        <div class="mt-2 flex items-center space-x-2 flex-wrap">
+                            <button type="button" onclick="addFormatting('bold')" class="px-3 py-1 bg-gray-200 border rounded text-gray-700 hover:bg-gray-300 text-sm">
+                                <strong>B</strong>
+                            </button>
+                            <button type="button" onclick="addFormatting('italic')" class="px-3 py-1 bg-gray-200 border rounded text-gray-700 hover:bg-gray-300 text-sm">
+                                <em>I</em>
+                            </button>
+                            <button type="button" onclick="addFormatting('underline')" class="px-3 py-1 bg-gray-200 border rounded text-gray-700 hover:bg-gray-300 text-sm">
+                                <u>U</u>
+                            </button>
+                            <button type="button" onclick="addFormatting('quote')" class="px-3 py-1 bg-gray-200 border rounded text-gray-700 hover:bg-gray-300 text-sm">
+                                <i class="fa fa-quote-left"></i> Quote
+                            </button>
+
+                            <!-- Language-Specific Code Buttons -->
+                            <button type="button" onclick="addCodeBlock('csharp')" class="px-3 py-1 border rounded hover:bg-gray-300 text-sm">
+                                <i class="fa fa-code"></i> C#
+                            </button>
+                            <button type="button" onclick="addCodeBlock('cpp')" class="px-3 py-1 border rounded hover:bg-gray-300 text-sm">
+                                <i class="fa fa-code"></i> C++
+                            </button>
+                            <button type="button" onclick="addCodeBlock('c')" class="px-3 py-1 border rounded hover:bg-gray-300 text-sm">
+                                <i class="fa fa-code"></i> C
+                            </button>
+                            <button type="button" onclick="addCodeBlock('python')" class="px-3 py-1 border rounded hover:bg-gray-300 text-sm">
+                                <i class="fab fa-python"></i> Python
+                            </button>
+                            <button type="button" onclick="addCodeBlock('rust')" class="px-3 py-1 border rounded hover:bg-gray-300 text-sm">
+                                <i class="fa fa-code"></i> Rust
+                            </button>
+                            <button type="button" onclick="addCodeBlock('assembly')" class="px-3 py-1 border rounded hover:bg-gray-300 text-sm">
+                                <i class="fa fa-code"></i> Assembly
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label asp-for="Topic" class="block text-sm font-medium text-coffee-cream">Topic</label>
+                        <input asp-for="Topic" placeholder="e.g data structures and algorithms" class="mt-1 block w-full rounded-md border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream placeholder-coffee-cream px-3 py-2 focus:border-pale-green focus:outline-none focus:ring-pale-green sm:text-sm" />
+                        <span asp-validation-for="Topic" class="text-red-500 text-xs"></span>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-coffee-cream">Tags (optional, comma-separated)</label>
+                        <input name="TagInput" type="text" class="mt-1 block w-full rounded-md border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream placeholder-coffee-cream px-3 py-2 focus:border-pale-green focus:outline-none focus:ring-pale-green sm:text-sm" placeholder="e.g. c++, algorithms, optimization">
+                    </div>
+
+                    <div>
+                        <label asp-for="SectionID" class="block text-sm font-medium text-coffee-cream">Section</label>
+                        <select asp-for="SectionID" 
+                                asp-items="@(new SelectList(ViewBag.Section, "SectionID", "SectionName", ViewBag.SelectedSectionId))" 
+                                class="mt-1 block w-full rounded-md border border-coffee-brown-light bg-coffee-brown-dark text-coffee-cream px-3 py-2 focus:border-pale-green focus:outline-none focus:ring-pale-green sm:text-sm">
+                            <option value="">Select a section...</option>
+                        </select>
+                        <span asp-validation-for="SectionID" class="text-red-500 text-xs"></span>
+                    </div>
+
+                    <div class="flex justify-end space-x-3">
+                        <a href="/" class="inline-flex justify-center border-2 border-black bg-coffee-brown px-4 py-2 text-sm font-medium text-coffee-cream shadow-sm hover:bg-coffee-brown-light">
+                            Cancel
+                        </a>
+                        <button type="submit" class="inline-flex justify-center border-2 border-black bg-pale-green px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-pale-green-dark">
+                            Post Thread
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addFormatting(type) {
+        var textarea = document.querySelector("textarea[name='Description']");
+        var selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+        var formattedText = "";
+
+        switch (type) {
+            case 'bold':
+                formattedText = `[b]${selection}[/b]`;
+                break;
+            case 'italic':
+                formattedText = `[i]${selection}[/i]`;
+                break;
+            case 'underline':
+                formattedText = `[u]${selection}[/u]`;
+                break;
+            case 'quote':
+                formattedText = `[quote]${selection}[/quote]`;
+                break;
+        }
+
+        var before = textarea.value.substring(0, textarea.selectionStart);
+        var after = textarea.value.substring(textarea.selectionEnd);
+        textarea.value = before + formattedText + after;
+
+        textarea.focus();
+        var cursorPosition = before.length + formattedText.length;
+        textarea.setSelectionRange(cursorPosition, cursorPosition);
+    }
+
+    function addCodeBlock(language) {
+        var textarea = document.querySelector("textarea[name='Description']");
+        var selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+        var placeholder = '';
+        var codeContent = selection || placeholder;
+        var formattedText = `[CODE lang="${language}"]\n${codeContent}\n[/CODE]`;
+
+        var before = textarea.value.substring(0, textarea.selectionStart);
+        var after = textarea.value.substring(textarea.selectionEnd);
+        textarea.value = before + formattedText + after;
+
+        textarea.focus();
+        if (!selection || selection === placeholder) {
+            var cursorPosition = before.length + `[CODE lang="${language}"]\n`.length;
+            textarea.setSelectionRange(cursorPosition, cursorPosition + placeholder.length);
+        } else {
+            var cursorPosition = before.length + formattedText.length;
+            textarea.setSelectionRange(cursorPosition, cursorPosition);
+        }
+    }
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
