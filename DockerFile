@@ -1,0 +1,24 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /src
+
+# Copy the project file first to leverage Docker layer caching for restores.
+COPY ["CPSCForum.csproj", "./"]
+
+# Restore dependencies
+RUN dotnet restore "CPSCForum.csproj"
+
+# Copy everything else and build
+COPY . .
+RUN dotnet publish "CPSCForum.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# Final runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+EXPOSE 8080
+ENV ASPNETCORE_URLS=http://+:8080
+
+# Copy published app
+COPY --from=build /app/publish .
+
+ENTRYPOINT ["dotnet", "CPSCForum.dll"]
